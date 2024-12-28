@@ -1,25 +1,44 @@
-name: database_linter
+name: database_tests
 
 # Controls when the workflow will run
 on: [push, fork, workflow_dispatch]
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
   build:
-    # The type of runner that the job will run on
     runs-on: ubuntu-22.04
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
+    services:
+      postgres:
+        image: postgres:13
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      # Install sqlfluff
       - name: Install sqlfluff
-        run: pip install sqlfluff
+        run: |
+          pip install sqlfluff
 
-      # Lint SQL files
       - name: Lint SQL files
-        run: sqlfluff lint database/scripts/*.sql
+        run: |
+          sqlfluff lint database/scripts/*.sql
 
+      - name: Run SQL queries
+        run: |
+          mkdir -p ./database/logs
+
+          make create -C database
+          make seed -C database
+          make select -C database
+          make drop -C database
+
+      - name: Check if generated logs are the same as expected
+        run: |
+          diff -rbB -u database/logs database/tests/logs/
