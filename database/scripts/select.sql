@@ -4,13 +4,13 @@ SELECT
     model_name,
     capacity,
     weight
-FROM Flight;
+FROM Plane_model;
 
 SELECT
     id,
     id_model,
     serial_number
-FROM Gate;
+FROM Plane;
 
 SELECT
     id,
@@ -18,7 +18,7 @@ SELECT
     city,
     country,
     iata_code
-FROM Plane;
+FROM Airport;
 
 SELECT
     id,
@@ -27,12 +27,12 @@ SELECT
     id_airport_arrival,
     departure_time,
     arrival_time
-FROM Plane_model;
+FROM Flight;
 
 SELECT
     id,
     id_airport,
     name
-FROM Airport;
+FROM Gate;
 
-\ dt
+\dt
