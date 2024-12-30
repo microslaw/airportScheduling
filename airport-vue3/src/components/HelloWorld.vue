@@ -17,7 +17,7 @@
           <v-card
             class="py-4"
             color="surface-variant"
-            href="aaa"
+            @click="openForm"
             prepend-icon="mdi-text-box-outline"
             rel="noopener noreferrer"
             rounded="lg"
@@ -106,9 +106,21 @@
         </v-col>
       </v-row>
     </v-responsive>
+    <Form :dialog="isFormOpen" @close="closeForm" />
   </v-container>
 </template>
 
 <script setup>
-  //
+import { ref } from 'vue';
+import Form from './Form.vue';
+
+const isFormOpen = ref(false);
+
+const openForm = () => {
+  isFormOpen.value = true;
+};
+
+const closeForm = () => {
+  isFormOpen.value = false;
+};
 </script>
