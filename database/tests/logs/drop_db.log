@@ -1,0 +1,2 @@
+DROP DATABASE airport_scheduling_staging;
+DROP DATABASE

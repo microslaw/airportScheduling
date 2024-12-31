@@ -1,0 +1,44 @@
+name: database_tests
+
+# Controls when the workflow will run
+on: [push, fork, workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+
+    services:
+      postgres:
+        image: postgres:13
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install sqlfluff
+        run: |
+          pip install sqlfluff
+
+      - name: Lint SQL files
+        run: |
+          sqlfluff lint database/scripts/*.sql
+
+      - name: Run SQL queries
+        run: |
+          mkdir -p ./database/logs
+
+          make create -C database
+          make seed -C database
+          make select -C database
+          make drop -C database
+
+      - name: Check if generated logs are the same as expected
+        run: |
+          diff -rbB -u database/logs database/tests/logs/

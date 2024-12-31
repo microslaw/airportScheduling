@@ -1,0 +1,7 @@
+[sqlfluff]
+dialect = postgres
+exclude_rules = CP02
+
+[sqlfluff:rules]
+capitalisation.column_names = lower
+capitalisation.table_names = upper
