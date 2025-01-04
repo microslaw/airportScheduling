@@ -9,15 +9,19 @@ This project is the backend service for the Airport Scheduling application. It p
 
 ## Usage
 
-3. Install dependencies:
+1. Install dependencies:
     ```sh
     npm install
     ```
-1. Start the server:
+2. Copy the `.env.example` file to `.env` and update the environment variables as needed:
+    ```sh
+    cp .env.example .env
+    ```
+3. Start the server:
     ```sh
     npm start
     ```
-2. The server will be running.
+4. The server will be running.
 
 ## API Endpoints
 
