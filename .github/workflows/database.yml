@@ -25,7 +25,7 @@ jobs:
       - name: Create .env file
         run: |
           echo "ROLE=postgres" > database/.env
-          echo "DB_NAME=postgres" >> database/.env
+          echo "DB_NAME=airport_scheduling_staging" >> database/.env
           echo "DB_PASSWORD=password" >> database/.env
 
       - name: Install sqlfluff
