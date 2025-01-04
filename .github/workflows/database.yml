@@ -22,6 +22,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Create .env file
+        run: |
+          echo "ROLE=postgres" > database/.env
+          echo "DB_NAME=postgres" >> database/.env
+          echo "DB_PASSWORD=password" >> database/.env
+
       - name: Install sqlfluff
         run: |
           pip install sqlfluff
