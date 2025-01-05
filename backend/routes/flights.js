@@ -24,4 +24,42 @@ router.post('/flights', async (req, res) => {
     }
 });
 
+// get all flights
+router.get('/flights', async (req, res) => {
+    try {
+        const result = await db.query('SELECT * FROM Flight');
+        res.json(result.rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Internal server error', message: err.message });
+    }
+})
+
+// get future flights 
+router.get('/flights/future', async (req, res) => {
+    try {
+        const result = await db.query('SELECT * FROM Flight WHERE departure_time > NOW()');
+        res.json(result.rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Internal server error', message: err.message });
+    }
+})
+
+// get a flight by id
+router.get('/flights/:id', async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const result = await db.query('SELECT * FROM Flight WHERE id = $1', [id]);
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: 'Flight not found' });
+        }
+        res.json(result.rows[0]);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Internal server error', message: err.message });
+    }
+})
+
 export default router;
