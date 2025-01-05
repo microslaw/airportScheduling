@@ -1,16 +1,6 @@
 import express from 'express';
-import pg from 'pg';
+import { pool as db } from '../db.js'
 const router = express.Router();
-
-// PostgreSQL client
-const { Client } = pg;
-const client = new Client({
-    host: 'localhost',
-    port: 5432,
-    database: 'airport_scheduling_staging',
-});
-
-await client.connect()
 
 // create a new flight
 router.post('/flights', async (req, res) => {
@@ -22,7 +12,7 @@ router.post('/flights', async (req, res) => {
     }
 
     try {
-        const result = await client.query(
+        const result = await db.query(
             `INSERT INTO Flight (id, id_plane, id_airport_departure, id_airport_arrival, departure_time, arrival_time)
              VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
             [id, id_plane, id_airport_departure, id_airport_arrival, departure_time, arrival_time]
