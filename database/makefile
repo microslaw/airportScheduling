@@ -1,5 +1,6 @@
-DB_NAME := airport_scheduling_staging
-DB_PASSWORD := password
+ROLE := $(shell grep ROLE .env | cut -d '=' -f2)
+DB_NAME := $(shell grep DB_NAME .env | cut -d '=' -f2)
+DB_PASSWORD := $(shell grep DB_PASSWORD .env | cut -d '=' -f2)
 
 connect:
 	psql \
