@@ -25,4 +25,5 @@ This project is the backend service for the Airport Scheduling application. It p
 
 ## API Endpoints
 
-- `POST /flights` - Create a new flight.
+- `POST /api/flights` - Create a new flight.
+- `GET /api/flights` - Retrive all flights.
