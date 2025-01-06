@@ -9,10 +9,8 @@
                     <v-text-field v-model="name" label="Flight number" required type="number"></v-text-field>
                     <v-text-field v-model="id_plane" label="Plane ID" required type="number"></v-text-field>
                     <v-text-field v-model="start" type="datetime-local" label="Departure UTC"></v-text-field>
-                    <v-select v-model="airport_departure" label="Departure Airport" :items="airports" item-text="name"
-                        item-value="id"></v-select>
-                    <v-select v-model="airport_arrival" label="Arrival Airport" :items="airports" item-text="name"
-                        item-value="id"></v-select>
+                    <v-select v-model="airport_departure" label="Departure Airport" :items="airportsItems"></v-select>
+                    <v-select v-model="airport_arrival" label="Arrival Airport" :items="airportsItems"></v-select>
                     <v-text-field v-model="end" type="datetime-local" label="Arrival UTC"></v-text-field>
                 </v-form>
                 <v-alert v-if="error" type="error" dismissible>{{ error }}</v-alert>
@@ -44,6 +42,7 @@ export default {
             airport_departure: '',
             airport_arrival: '',
             error: '',
+            airportsItems: [],
             airports: []
         };
     },
@@ -62,6 +61,8 @@ export default {
                 }
                 const data = await response.json();
                 this.airports = data;
+                this.airportsItems = data.map(a => a.name);
+                console.log(this.airports);
             } catch (error) {
                 console.error('Error fetching airports:', error);
                 this.error = 'Failed to load airports';
@@ -73,13 +74,13 @@ export default {
                 id_plane: this.id_plane,
                 departure_time: this.start,
                 arrival_time: this.end,
-                id_airport_departure: this.airport_departure,
-                id_airport_arrival: this.airport_arrival
+                id_airport_departure: this.airports.find(e => e.name == this.airport_departure).id,
+                id_airport_arrival: this.airports.find(e => e.name == this.airport_arrival).id
             };
             console.log('Form Data:', flight);
             this.error = '';
             try {
-                const response = await fetch(`${process.env.VUE_APP_API_BASE_URL}/flights`, {
+                const response = await fetch(`http://localhost:4000/api/flights`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
