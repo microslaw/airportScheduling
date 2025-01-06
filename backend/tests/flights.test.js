@@ -1,4 +1,3 @@
-// filepath: /Users/matteominin/Desktop/ANDB/airportScheduling/backend/tests/flights.test.js
 import { expect } from 'chai';
 import request from 'supertest';
 import express from 'express';
