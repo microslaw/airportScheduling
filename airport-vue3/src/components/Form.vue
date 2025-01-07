@@ -5,38 +5,29 @@
                 <span class="headline">Add Flight</span>
             </v-card-title>
             <v-card-text>
-
                 <v-form ref="form" v-model="valid" lazy-validation>
                     <v-text-field v-model="flight.id" label="Flight ID" required type="text"></v-text-field>
                     <v-text-field v-model="flight.id_plane" label="Plane ID" required type="text"></v-text-field>
-                    <v-text-field v-model="flight.id_airport_departure" label="Departure Airport ID" required
-                        type="text"></v-text-field>
-                    <v-text-field v-model="flight.id_airport_arrival" label="Arrival Airport ID" required
-                        type="text"></v-text-field>
-                    <v-text-field v-model="flight.departure_time" type="datetime-local" label="Departure Time (UTC)"
-                        required></v-text-field>
-                    <v-text-field v-model="flight.arrival_time" type="datetime-local" label="Arrival Time (UTC)"
-                        required></v-text-field>
-
+                    <v-select v-model="flight.id_airport_departure" label="Departure Airport" :items="airports_name"></v-select>
+                    <v-text-field v-model="flight.departure_time" type="datetime-local" label="Departure Time (UTC)" required></v-text-field>
+                    <v-select v-model="flight.id_airport_arrival" label="Arrival Airport" :items="airports_name"></v-select>
+                    <v-text-field v-model="flight.arrival_time" type="datetime-local" label="Arrival Time (UTC)" required></v-text-field>
                 </v-form>
                 <v-alert v-if="error" type="error" dismissible>{{ error }}</v-alert>
             </v-card-text>
             <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn color="blue darken-1" text @click="close">Close</v-btn>
-
-                <v-btn color="blue darken-1" text :disabled="!valid" @click="submitFlight">
-                    Submit
-                </v-btn>
-
+                <v-btn color="blue darken-1" text :disabled="!valid" @click="submitFlight">Submit</v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import apiClient from '@/api/index.js';
+import { onMounted, ref } from 'vue';
+import { getAirports } from '@/api/airports';
+import { createFlight } from '@/api/flight';
 
 defineProps({
     dialog: {
@@ -55,6 +46,19 @@ const flight = ref({
     arrival_time: '',
 });
 
+const airports = ref([]);
+const airports_name = ref([]);
+
+onMounted(async () => {
+    try {
+        const response = await getAirports();
+        airports.value = response.data;
+        airports_name.value = response.data.map(airport => airport.name);
+    } catch (error) {
+        console.error('Error fetching airports:', error);
+    }
+});
+
 const emit = defineEmits(['close', 'update:dialog']);
 
 const close = () => {
@@ -63,7 +67,9 @@ const close = () => {
 
 const submitFlight = async () => {
     try {
-        await apiClient.post('/flights', flight.value);
+        flight.value.id_airport_departure = airports.value.find(airport => airport.name === flight.value.id_airport_departure).id;
+        flight.value.id_airport_arrival = airports.value.find(airport => airport.name === flight.value.id_airport_arrival).id;
+        await createFlight(flight.value);
         alert('Flight added successfully!');
         close();
     } catch (error) {

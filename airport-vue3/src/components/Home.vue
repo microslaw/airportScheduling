@@ -24,17 +24,7 @@
       <v-divider class="my-4" />
 
       <v-list v-if="flights.length > 0">
-        <v-list-item v-for="flight in flights" :key="flight.id">
-          <v-list-item-content>
-            <v-list-item-title>
-              Flight ID: {{ flight.id }}
-            </v-list-item-title>
-            <v-list-item-subtitle>
-              {{ flight.id_airport_departure }} → {{ flight.id_airport_arrival }} | Departure: {{ flight.departure_time
-              }}
-            </v-list-item-subtitle>
-          </v-list-item-content>
-        </v-list-item>
+        <FlightItem v-for="flight in flights" :key="flight.id" :flight="flight" :airports="airports" />
       </v-list>
       <v-alert v-else type="info">
         No flights available. Add a flight to see it here!
@@ -46,13 +36,15 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import Form from './Form.vue';
-import apiClient from '@/api/index.js';
-import { getFlights, createFlight } from '@/api/flight.js';
+import FlightItem from './FlightItem.vue';
+import { getFlights } from '@/api/flight.js';
+import { getAirports } from '@/api/airports.js';
 
 const isFormOpen = ref(false);
 const flights = ref([]);
+const airports = ref([]);
 
 const openForm = () => {
   isFormOpen.value = true;
@@ -64,10 +56,24 @@ const closeForm = () => {
 
 const fetchFlights = async () => {
   try {
-    const response = await apiClient.get('/flights');
+    const response = await getFlights();
     flights.value = response.data;
   } catch (error) {
     console.error('Error fetching flights:', error);
   }
 };
+
+const fetchAirports = async () => {
+  try {
+    const response = await getAirports();
+    airports.value = response.data;
+  } catch (error) {
+    console.error('Error fetching airports:', error);
+  }
+};
+
+onMounted(() => {
+  fetchFlights();
+  fetchAirports();
+});
 </script>
