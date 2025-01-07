@@ -3,7 +3,7 @@ CREATE TABLE Plane_model (
     producer_name varchar(255),
     model_name varchar(255),
     capacity int,
-    weight int
+weight int
 );
 
 CREATE TABLE Plane (
