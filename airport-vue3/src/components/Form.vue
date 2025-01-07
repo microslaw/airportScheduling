@@ -5,6 +5,7 @@
                 <span class="headline">Add Flight</span>
             </v-card-title>
             <v-card-text>
+
                 <v-form ref="form" v-model="valid" lazy-validation>
                     <v-text-field v-model="flight.id" label="Flight ID" required type="text"></v-text-field>
                     <v-text-field v-model="flight.id_plane" label="Plane ID" required type="text"></v-text-field>
@@ -16,14 +17,18 @@
                         required></v-text-field>
                     <v-text-field v-model="flight.arrival_time" type="datetime-local" label="Arrival Time (UTC)"
                         required></v-text-field>
+
                 </v-form>
+                <v-alert v-if="error" type="error" dismissible>{{ error }}</v-alert>
             </v-card-text>
             <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn color="blue darken-1" text @click="close">Close</v-btn>
+
                 <v-btn color="blue darken-1" text :disabled="!valid" @click="submitFlight">
                     Submit
                 </v-btn>
+
             </v-card-actions>
         </v-card>
     </v-dialog>
